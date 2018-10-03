@@ -5,26 +5,16 @@
   hosts:  ci-server
   ignore_errors: true
   roles: 
-    - 
-      launchpad_ppa_webupd8_cache_valid_time: 3600
-      role: ansiblebit.launchpad-ppa-webupd8
-    - 
-      oracle_java_version_string: 'java-8-oracle'
-      oracle_java_version_installed: 'java-8-oracle'
-      oracle_java_installed: false
-      debug: false
-      oracle_java_apt_repository: "ppa:webupd8team/java"
-      oracle_java_cache_valid_time: 3600
-      oracle_java_deb_package: 'oracle-java10-installer'
-      oracle_java_debconf_package_default: 'oracle-java10-set-default'
-      oracle_java_home: "/usr/lib/jvm/java-10-oracle"
-      oracle_java_set_as_default: true 
-      oracle_java_state: latest
-      oracle_java_use_defaults: false
-      role: ansiblebit.oracle-java
-      ignore_errors: true
     -
-      geerlingguy.jenkins
+      role: geerlingguy.java
+      become: yes
+      java_packages:
+        -
+          openjdk-8-jdk
+    -
+      role: geerlingguy.jenkins
+      become: yes
+
   tasks: 
     - 
       name: "Ping the hosts"
@@ -32,9 +22,8 @@
     - 
       apt: "pkg=git state=latest"
       name: "Make sure Git is available"
-    - 
-      include: ~/.ansible/roles/ansiblebit.launchpad-ppa-webupd8/tasks/os_distribution/ubuntu.yml
   vars: 
+    jenkins_version: "2.138"
     jenkins_hostname: localhost
     jenkins_http_port: 8080
     jenkins_jar_location: /opt/jenkins-cli.jar
